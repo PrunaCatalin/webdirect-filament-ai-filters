@@ -1,0 +1,26 @@
+{
+    "name": "webdirect/ai-filters",
+    "description": "AI-powered filters for Filament panels.",
+    "type": "library",
+    "version": "0.1.0",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "filament/filament": "^4.0",
+        "laravel/ai": "^0.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webdirect\\AiFilters\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webdirect\\AiFilters\\AiFiltersServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
