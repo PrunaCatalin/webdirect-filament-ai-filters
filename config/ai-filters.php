@@ -76,13 +76,18 @@ return [
     |--------------------------------------------------------------------------
     | Action Defaults
     |--------------------------------------------------------------------------
+    |
+    | When a value is null, the plugin falls back to the translated string
+    | from `ai-filters::ai-filters.action.*`. Set a string here to override
+    | the translation for every locale.
+    |
     */
 
     'action' => [
-        'label' => 'AI Filter',
+        'label' => null,
         'icon' => 'heroicon-o-sparkles',
-        'modal_heading' => 'Filter with AI',
-        'modal_description' => 'Describe what you want to find. Active filters are sent as context.',
+        'modal_heading' => null,
+        'modal_description' => null,
     ],
 
 ];

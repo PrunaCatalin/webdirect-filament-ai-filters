@@ -151,6 +151,43 @@ AiFilterAction::make('aiFilter')
     ->visible(fn () => auth()->user()->can('use-ai-filters'));
 ```
 
+### Translations
+
+The plugin ships with translations for the following locales:
+
+`en` (default) · `ro` · `es` · `fr` · `de` · `it` · `nl` · `pt_BR` · `pl` · `tr`
+
+Laravel automatically picks the right file based on the active locale
+(`App::setLocale()` / `APP_LOCALE`). If a locale is missing, Laravel falls
+back to the configured fallback locale (English by default).
+
+**Publishing translations** — to customize the shipped strings:
+
+```bash
+php artisan vendor:publish --tag=ai-filters-translations
+```
+
+This copies every locale to `lang/vendor/ai-filters/<locale>/ai-filters.php`.
+Edit whichever you need. Published files take precedence over the ones
+shipped in the package.
+
+**Overriding via config** — for a table-specific label you can bypass
+translations entirely by setting the string in `config/ai-filters.php`:
+
+```php
+'action' => [
+    'label' => 'Ask the AI',           // wins over the translation
+    'modal_heading' => null,           // null → translation is used
+    'modal_description' => null,
+],
+```
+
+Every `null` value falls back to the translated string; every string value
+wins over it.
+
+Missing a language? PRs welcome — copy
+`resources/lang/en/ai-filters.php`, translate, open a pull request.
+
 ### Customising the system prompt
 
 The full system prompt that steers the AI lives in a Markdown file, not in
