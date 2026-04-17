@@ -1,9 +1,31 @@
 {
     "name": "webdirect/ai-filters",
-    "description": "AI-powered filters for Filament panels.",
+    "description": "AI-powered filters for Filament v4 panels. Filter any table with natural language through the official laravel/ai SDK.",
     "type": "library",
-    "version": "0.1.0",
     "license": "MIT",
+    "keywords": [
+        "filament",
+        "filamentphp",
+        "filament-plugin",
+        "laravel",
+        "ai",
+        "ai-filters",
+        "natural-language",
+        "table-filters",
+        "laravel-ai"
+    ],
+    "homepage": "https://github.com/PrunaCatalin/webdirect-filament-ai-filters",
+    "support": {
+        "issues": "https://github.com/PrunaCatalin/webdirect-filament-ai-filters/issues",
+        "source": "https://github.com/PrunaCatalin/webdirect-filament-ai-filters"
+    },
+    "authors": [
+        {
+            "name": "Pruna Catalin",
+            "homepage": "https://github.com/PrunaCatalin",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": "^8.3",
         "filament/filament": "^4.0",
