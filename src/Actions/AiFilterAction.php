@@ -26,19 +26,19 @@ final class AiFilterAction
 
     public static function make(string $name = 'aiFilter'): Action
     {
-        $config = config('ai-filters.action');
+        $config = config('ai-filters.action', []);
 
         return Action::make($name)
-            ->label($config['label'])
-            ->icon($config['icon'])
+            ->label($config['label'] ?? __('ai-filters::ai-filters.action.label'))
+            ->icon($config['icon'] ?? 'heroicon-o-sparkles')
             ->color('primary')
-            ->modalHeading($config['modal_heading'])
-            ->modalDescription($config['modal_description'])
-            ->modalSubmitActionLabel('Apply')
+            ->modalHeading($config['modal_heading'] ?? __('ai-filters::ai-filters.action.modal_heading'))
+            ->modalDescription($config['modal_description'] ?? __('ai-filters::ai-filters.action.modal_description'))
+            ->modalSubmitActionLabel(__('ai-filters::ai-filters.action.modal_submit'))
             ->schema([
                 Textarea::make('prompt')
                     ->hiddenLabel()
-                    ->placeholder('e.g. users created last week whose email is verified')
+                    ->placeholder(__('ai-filters::ai-filters.action.placeholder'))
                     ->required()
                     ->rows(4)
                     ->autosize(),
@@ -66,8 +66,8 @@ final class AiFilterAction
 
         if (empty($updates) && $search === null) {
             self::notify(
-                'No matching filters',
-                'The AI could not translate your request into the available filters or search.',
+                __('ai-filters::ai-filters.notifications.no_match_title'),
+                __('ai-filters::ai-filters.notifications.no_match_body'),
                 'warning',
             );
 
@@ -82,7 +82,11 @@ final class AiFilterAction
 
         $changes = count($updates) + ($search !== null ? 1 : 0);
 
-        self::notify('Filters applied', "{$changes} change(s) applied.", 'success');
+        self::notify(
+            __('ai-filters::ai-filters.notifications.applied_title'),
+            __('ai-filters::ai-filters.notifications.applied_body', ['count' => $changes]),
+            'success',
+        );
     }
 
     /**
@@ -112,7 +116,11 @@ final class AiFilterAction
                 model: config('ai-filters.model'),
             );
         } catch (Throwable $e) {
-            self::notify('AI request failed', $e->getMessage(), 'danger');
+            self::notify(
+                __('ai-filters::ai-filters.notifications.error_title'),
+                $e->getMessage(),
+                'danger',
+            );
 
             return null;
         }

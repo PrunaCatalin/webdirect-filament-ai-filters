@@ -10,6 +10,8 @@ class AiFiltersServiceProvider extends ServiceProvider
 
     private const PROMPT_PATH = __DIR__.'/../resources/prompts/filter-agent.md';
 
+    private const LANG_PATH = __DIR__.'/../resources/lang';
+
     public function register(): void
     {
         $this->mergeConfigFrom(self::CONFIG_PATH, 'ai-filters');
@@ -17,6 +19,8 @@ class AiFiltersServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadTranslationsFrom(self::LANG_PATH, 'ai-filters');
+
         $this->publishes(
             [self::CONFIG_PATH => config_path('ai-filters.php')],
             'ai-filters-config',
@@ -25,6 +29,11 @@ class AiFiltersServiceProvider extends ServiceProvider
         $this->publishes(
             [self::PROMPT_PATH => resource_path('prompts/ai-filters/filter-agent.md')],
             'ai-filters-prompt',
+        );
+
+        $this->publishes(
+            [self::LANG_PATH => $this->app->langPath('vendor/ai-filters')],
+            'ai-filters-translations',
         );
 
         $this->overrideAiProviderKey();
