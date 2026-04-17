@@ -1,5 +1,10 @@
 # Webdirect AI Filters for Filament
 
+> **Credits**: the idea for this plugin came from
+> [this video](https://www.youtube.com/watch?v=82ntd5LopoI) on the
+> [Filament Daily](https://www.youtube.com/@FilamentDaily) channel by Povilas
+> Korop. Huge thank-you — go subscribe.
+
 A Filament v4 panel plugin that lets users filter any table with natural language.
 Click the **AI Filter** button on a table, type what you want (`"active platinum
 customers from Germany signed up last year"`), and the plugin sends your prompt
@@ -108,18 +113,24 @@ That's it. Open the table, click **AI Filter**, write what you want, hit
 
 ### Supported filter types
 
-The plugin auto-detects the right form-field key for each filter type:
+The plugin is fully dynamic: it introspects each filter's form schema and
+sends the AI a rich description of every form field — its name, type, label,
+whether it's `required`, its Laravel validation rules, and (for Select/Radio)
+the accepted options.
 
-| Filter                                    | Key sent to AI         |
-| ----------------------------------------- | ---------------------- |
-| `SelectFilter` (single)                   | `value` (string)       |
-| `SelectFilter` with `->multiple()`        | `values` (array)       |
-| `TernaryFilter`                           | `value` (`true`/`false`/`null`) |
-| `Filter` with custom schema               | each form field name (e.g. `from`, `until`) |
-| `Filter` (toggle / no schema)             | `isActive`             |
+This means **any** Filament filter works out of the box, including your own
+custom-schema filters. The built-in handling for the common ones:
+
+| Filter                                    | Fields exposed to AI                              |
+| ----------------------------------------- | ------------------------------------------------- |
+| `SelectFilter` (single)                   | `value` + option keys                             |
+| `SelectFilter` with `->multiple()`        | `values` (array) + option keys                    |
+| `TernaryFilter`                           | `value` + `booleanLike: true`                     |
+| `Filter` (toggle / no schema)             | `isActive` (Checkbox / Toggle)                    |
+| `Filter` with custom schema               | every form field: name, type, required, rules, options, inputType (email/number/url), inputFormat (date/datetime/time), placeholder |
 
 For custom-schema filters, the AI sees the field names you defined, so use
-descriptive keys.
+descriptive keys like `from`, `until`, `min_revenue`, `email_domain`.
 
 ### Global search
 
@@ -140,6 +151,46 @@ AiFilterAction::make('aiFilter')
     ->visible(fn () => auth()->user()->can('use-ai-filters'));
 ```
 
+### Customising the system prompt
+
+The full system prompt that steers the AI lives in a Markdown file, not in
+PHP code. You can override it with your own file without touching the package.
+
+**1. Publish the default template** so you have a copy to work from:
+
+```bash
+php artisan vendor:publish --tag=ai-filters-prompt
+```
+
+This copies the built-in template to
+`resources/prompts/ai-filters/filter-agent.md`.
+
+**2. Point the plugin at your file** either via `.env`:
+
+```dotenv
+AI_FILTERS_PROMPT_PATH="${PWD}/resources/prompts/ai-filters/filter-agent.md"
+```
+
+or directly in `config/ai-filters.php`:
+
+```php
+'prompt_path' => resource_path('prompts/ai-filters/filter-agent.md'),
+```
+
+When `prompt_path` is `null`, the built-in template is used.
+
+**3. Placeholders** — the template is rendered with `strtr()` against:
+
+| Placeholder          | Replaced with                                                       |
+| -------------------- | ------------------------------------------------------------------- |
+| `{{available}}`      | pretty-printed JSON list of filters + fields + rules + options      |
+| `{{current}}`        | JSON of the current `tableFilters` state                            |
+| `{{searchable}}`     | JSON array of searchable column names                               |
+| `{{currentSearch}}`  | current global search value                                         |
+| `{{extra}}`          | rendered `ai-filters.instructions` text (empty when not set)        |
+
+Any placeholder you omit is simply not rewritten — keep only what you need.
+
 ## Configuration reference
 
 `config/ai-filters.php`:
@@ -151,6 +202,8 @@ return [
     'api_key'  => env('AI_FILTERS_API_KEY'),
 
     'instructions' => null, // extra system-prompt text appended to the agent
+
+    'prompt_path'  => env('AI_FILTERS_PROMPT_PATH'), // override path to MD template, null = built-in
 
     'action' => [
         'label'             => 'AI Filter',
@@ -167,6 +220,7 @@ return [
 | `model`         | Specific model id. `null` = provider default.                           |
 | `api_key`       | Optional. Overrides the provider's configured API key at boot.          |
 | `instructions`  | Free text appended to the agent's system prompt. Use for table-specific business rules. |
+| `prompt_path`   | Absolute path to a Markdown prompt template. `null` = built-in template.|
 | `action.*`      | Visual defaults for the action button and modal.                        |
 
 ## How it works
@@ -236,14 +290,25 @@ packages/webdirect/ai-filters/
 ├── composer.json
 ├── config/
 │   └── ai-filters.php
+├── resources/
+│   └── prompts/
+│       └── filter-agent.md         # default system prompt template
 └── src/
     ├── AiFiltersPlugin.php         # Filament Plugin contract
-    ├── AiFiltersServiceProvider.php # config publish + provider key override
+    ├── AiFiltersServiceProvider.php # config + prompt publish, provider key override
     ├── Actions/
     │   └── AiFilterAction.php      # the table header action
     └── Agents/
         └── FilterAgent.php         # laravel/ai agent w/ structured output
 ```
+
+## Credits
+
+- Original idea: [this video](https://www.youtube.com/watch?v=82ntd5LopoI) on
+  the [Filament Daily](https://www.youtube.com/@FilamentDaily) channel by
+  Povilas Korop. Go subscribe.
+- Built on top of [`laravel/ai`](https://laravel.com/docs/13.x/ai-sdk) and
+  [Filament v4](https://filamentphp.com).
 
 ## License
 
