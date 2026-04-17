@@ -1,5 +1,10 @@
 # Webdirect AI Filters for Filament
 
+> **Credits**: the idea for this plugin came from
+> [this video](https://www.youtube.com/watch?v=82ntd5LopoI) on the
+> [Filament Daily](https://www.youtube.com/@FilamentDaily) channel by Povilas
+> Korop. Huge thank-you — go subscribe.
+
 A Filament v4 panel plugin that lets users filter any table with natural language.
 Click the **AI Filter** button on a table, type what you want (`"active platinum
 customers from Germany signed up last year"`), and the plugin sends your prompt
@@ -9,11 +14,6 @@ structured set of filter values that the plugin applies to the table.
 Powered by the official [`laravel/ai`](https://laravel.com/docs/13.x/ai-sdk)
 package, so any provider it supports (Anthropic, OpenAI, Gemini, ...) can be
 used.
-
-> **Credits**: the idea for this plugin came from
-> [this video](https://www.youtube.com/watch?v=82ntd5LopoI) on the
-> [Filament Daily](https://www.youtube.com/@FilamentDaily) channel by Povilas
-> Korop. Huge thank-you — go subscribe.
 
 ## Requirements
 
