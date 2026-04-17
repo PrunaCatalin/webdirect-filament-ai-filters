@@ -52,6 +52,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Prompt Template Path
+    |--------------------------------------------------------------------------
+    |
+    | Absolute path to a Markdown/text file used as the FilterAgent system
+    | prompt template. When null, the plugin's built-in template is used.
+    |
+    | The template is rendered with the following placeholders:
+    |   {{available}}      — JSON list of available filters and their fields
+    |   {{current}}        — JSON of the current filter state
+    |   {{searchable}}     — JSON array of searchable column names
+    |   {{currentSearch}}  — current global search value
+    |   {{extra}}          — rendered "instructions" appended (blank if none)
+    |
+    | Publish the default template with:
+    |   php artisan vendor:publish --tag=ai-filters-prompt
+    |
+    */
+
+    'prompt_path' => env('AI_FILTERS_PROMPT_PATH'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Action Defaults
     |--------------------------------------------------------------------------
     */

@@ -7,6 +7,8 @@ use Filament\Panel;
 
 class AiFiltersPlugin implements Plugin
 {
+    public const ID = 'webdirect-ai-filters';
+
     public static function make(): static
     {
         return app(static::class);
@@ -22,7 +24,7 @@ class AiFiltersPlugin implements Plugin
 
     public static function getPluginId(): string
     {
-        return 'webdirect-ai-filters';
+        return self::ID;
     }
 
     public function getId(): string
@@ -30,13 +32,7 @@ class AiFiltersPlugin implements Plugin
         return static::getPluginId();
     }
 
-    public function register(Panel $panel): void
-    {
-        //
-    }
+    public function register(Panel $panel): void {}
 
-    public function boot(Panel $panel): void
-    {
-        //
-    }
+    public function boot(Panel $panel): void {}
 }

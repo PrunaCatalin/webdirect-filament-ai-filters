@@ -6,23 +6,33 @@ use Illuminate\Support\ServiceProvider;
 
 class AiFiltersServiceProvider extends ServiceProvider
 {
+    private const CONFIG_PATH = __DIR__.'/../config/ai-filters.php';
+
+    private const PROMPT_PATH = __DIR__.'/../resources/prompts/filter-agent.md';
+
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/ai-filters.php', 'ai-filters');
+        $this->mergeConfigFrom(self::CONFIG_PATH, 'ai-filters');
     }
 
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__.'/../config/ai-filters.php' => config_path('ai-filters.php'),
-        ], 'ai-filters-config');
+        $this->publishes(
+            [self::CONFIG_PATH => config_path('ai-filters.php')],
+            'ai-filters-config',
+        );
+
+        $this->publishes(
+            [self::PROMPT_PATH => resource_path('prompts/ai-filters/filter-agent.md')],
+            'ai-filters-prompt',
+        );
 
         $this->overrideAiProviderKey();
     }
 
     /**
-     * Override the configured laravel/ai provider key with the plugin's
-     * own key when the user has set `ai-filters.api_key`.
+     * Copy the plugin's API key into the configured laravel/ai provider,
+     * allowing users to override the provider key without touching config/ai.php.
      */
     protected function overrideAiProviderKey(): void
     {
